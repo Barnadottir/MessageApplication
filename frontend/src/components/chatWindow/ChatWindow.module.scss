@@ -63,6 +63,8 @@
   color: #333;
   font-size: 1rem;
   transition: border 0.3s;
+  position: relative;
+  bottom: 30px;
 
   &:focus {
     border-color: #a4d4ca;

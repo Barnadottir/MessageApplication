@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import styles from './ChatWindow.module.scss';
 import { getChatMessages } from '../../api/api';
+import { FriendContext } from '../../contexts/FriendContext';
 
 interface ChatData {
   message: string;
@@ -11,11 +12,14 @@ interface ChatData {
 const ChatWindow = () => {
   const [currentMessage, setCurrentMessage] = useState<string>('');
   const [chatData, setChatData] = useState<ChatData[]>([]);
+  chatData && console.log('chatData -> ', chatData);
+  const { friend } = useContext(FriendContext);
+  console.log('friend -> ', friend);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getChatMessages('oskar');
+        const response = await getChatMessages(friend);
         setChatData(response.data);
       } catch (error) {
         console.error('Error fetching chat messages:', error);
@@ -23,7 +27,7 @@ const ChatWindow = () => {
     };
 
     fetchData();
-  }, []);
+  }, [friend]);
 
   return (
     <div className={styles['chatwindow--wrapper']}>
