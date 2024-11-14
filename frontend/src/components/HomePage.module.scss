@@ -1,7 +1,10 @@
 .homepage--wrapper {
   height: 100dvh;
-  width: 100dvh;
+  width: 100dvw;
   color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .main-chat--wrapper {
@@ -11,4 +14,6 @@
   align-items: center;
   width: 75dvw;
   height: 80dvh;
+  overflow: hidden;
+  border-radius: 2rem;
 }

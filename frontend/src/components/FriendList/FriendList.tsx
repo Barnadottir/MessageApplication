@@ -22,11 +22,16 @@ const FriendList = () => {
 
   return (
     <div className={styles['friendlist--wrapper']}>
-      friendlist
-      <div>
+      <h2 className={styles['friendlist--title']}>Friend List</h2>
+      <div className={styles['friendlist--container']}>
         {friendList &&
-          friendList.map((friend: FriendListType) => (
-            <div>{friend.full_name}</div>
+          friendList.map((friend) => (
+            <div key={friend.username} className={styles['friend-card']}>
+              <div className={styles['friend-name']}>{friend.full_name}</div>
+              <div className={styles['friend-username']}>
+                @{friend.username}
+              </div>
+            </div>
           ))}
       </div>
     </div>

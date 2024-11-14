@@ -6,9 +6,10 @@
   justify-content: center;
   margin: auto;
   padding: 1rem;
-  background: linear-gradient(to bottom, white, #e6fffa);
+  background: linear-gradient(to bottom, #e3f9f4, #bef2e7);
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  min-height: 100%;
 }
 
 .chatwindow--messages {
