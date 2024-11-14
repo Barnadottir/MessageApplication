@@ -79,8 +79,9 @@ async def chat_messages(receiver: models.Receiver, db: database.DB, current_user
         ).all()
     else:
         messages = []
+    id2username = {user.id:user.username for user in [receiver_user,current_user]}
     message_list = [
-        models.MessagesOut(message=message.message,timestamp=message.timestamp)
+        models.MessagesOut(message=message.message,timestamp=message.timestamp,sender=id2username[message.sender_id],receiver=id2username[message.receiver_id])
         for message in messages
     ]
     return message_list

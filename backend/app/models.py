@@ -43,8 +43,11 @@ class Receiver(BaseModel):
     receiver: str
 
 class MessagesOut(BaseModel):
-    message: str
     timestamp: datetime.datetime
+    sender: str
+    receiver: str
+    message: str
+
 
 class UserOut(BaseModel):
     username: str
