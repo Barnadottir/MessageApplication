@@ -79,21 +79,6 @@ async def _token_to_user(db: database.DB, request: fastapi.Request):
 
 TU = Annotated[models.User,Depends(token_to_user)]
 
-# Add an admin user if not already present
-def add_admin(db):
-    user = models.SignupIn(
-        username='admin',
-        email='mixsam36@gmail.com',
-        full_name='Alexander Samson',
-        password='admin',
-    )
-    if not get_user(user.username,db):
-        hashed_password = utils.Password.hash(user.password)
-        new_user = models.User(**user.dict(), hashed_password=hashed_password)
-        db.add(new_user)
-        db.commit()
-        db.refresh(new_user)
-
 router = fastapi.APIRouter(
     prefix='/auth',
     tags=['auth'],
