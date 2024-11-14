@@ -3,6 +3,7 @@ import fastapi
 from fastapi import Depends
 from fastapi.responses import ORJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+import sqlalchemy
 import logging
 
 from . import models, database
@@ -69,13 +70,15 @@ async def send_message(message: models.MessageIn, db: database.DB, current_user:
 @app.post("/chat_messages")
 async def chat_messages(receiver: models.Receiver, db: database.DB, current_user: TU) -> list[models.MessagesOut]:
     receiver_user = db.query(models.User).filter(models.User.username == receiver.receiver).first()
-    print(receiver,receiver_user)
-    if not receiver_user:
-        raise fastapi.HTTPException(status_code=404, detail="Receiver not found")
-    messages = db.query(models.Message).filter(
-        (models.Message.sender_id == current_user.id) &
-        (models.Message.receiver_id == receiver_user.id)
-    ).all()
+    if receiver_user:
+        messages = db.query(models.Message).filter(
+            ((models.Message.sender_id == current_user.id) &
+                (models.Message.receiver_id == receiver_user.id)) |
+            ((models.Message.sender_id == receiver_user.id) &
+                (models.Message.receiver_id == current_user.id))
+        ).all()
+    else:
+        messages = []
     message_list = [
         models.MessagesOut(message=message.message,timestamp=message.timestamp)
         for message in messages
