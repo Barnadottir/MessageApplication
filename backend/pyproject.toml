@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = ["Alexander <mixsam36@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "app" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = { extras = ["standard"], version = "^0.112.3" }
+pyjwt = "^2.9.0"
+passlib = { extras = ["bcrypt"], version = "^1.7.4" }
+sqlmodel = "^0.0.22"
+orjson = "^3.10.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

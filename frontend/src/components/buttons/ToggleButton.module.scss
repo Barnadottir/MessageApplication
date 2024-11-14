@@ -1,0 +1,51 @@
+.toggleButton {
+  position: fixed;
+  top: 100px;
+  overflow: hidden;
+  width: 100px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: black;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background 0.3s ease;
+
+  .label {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    transition: transform 0.3s ease;
+
+    &.active {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    &:first-child {
+      transform: translateX(-100%);
+    }
+
+    &:last-child {
+      transform: translateX(100%);
+    }
+  }
+
+  .active:first-child {
+    transform: translateX(0);
+  }
+
+  .active:last-child {
+    transform: translateX(0);
+  }
+
+  &.outlined {
+    background: black;
+    color: white;
+    border-radius: 10px;
+    border: 2px solid white;
+  }
+}
