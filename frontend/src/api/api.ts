@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios';
+import Cookies from 'js-cookie';
 
 const handleAxiosError = (error) => {
   console.log('error -> ', error);
@@ -8,6 +9,7 @@ const handleAxiosError = (error) => {
       case 400:
         return new Error(`${data.detail || 'Invalid input'}`);
       case 401:
+        Cookies.remove('Token');
         return new Error('Invalid credentials');
       case 404:
         return new Error('Resource not found');
@@ -57,5 +59,17 @@ export const login = async (username: string, password: string) => {
     'auth/login',
     new URLSearchParams({ username, password }),
   );
+  return response;
+};
+
+export const getChatMessages = async (receiver: string) => {
+  const response = await axiosInstance.post('/chat_messages', {
+    receiver,
+  });
+  return response;
+};
+
+export const getFriendsList = async () => {
+  const response = await axiosInstance.get('/friends');
   return response;
 };

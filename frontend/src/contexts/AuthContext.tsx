@@ -1,4 +1,5 @@
 import React, { createContext, useState, ReactNode } from 'react';
+import Cookies from 'js-cookie';
 
 interface AuthContextProps {
   username: string | null;
@@ -10,7 +11,9 @@ interface AuthContextProps {
 export const AuthContext = createContext({} as AuthContextProps);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const [loggedIn, setLoggedIn] = useState<boolean>(
+    Cookies.get('Token') ? true : false,
+  );
   const [username, setUsername] = useState<string | null>(null);
 
   return (

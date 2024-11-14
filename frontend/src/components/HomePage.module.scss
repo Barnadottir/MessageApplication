@@ -3,3 +3,12 @@
   width: 100dvh;
   color: black;
 }
+
+.main-chat--wrapper {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  width: 75dvw;
+  height: 80dvh;
+}

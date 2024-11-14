@@ -3,6 +3,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import LoginPage from './login/LoginPage';
 import styles from './HomePage.module.scss';
 import ChatWindow from './chatWindow/ChatWindow';
+import FriendList from './FriendList/FriendList';
 
 const HomePage = () => {
   const { loggedIn } = useContext(AuthContext);
@@ -11,7 +12,8 @@ const HomePage = () => {
   return (
     <div className={styles['homepage--wrapper']}>
       {loggedIn ? (
-        <div>
+        <div className={styles['main-chat--wrapper']}>
+          <FriendList />
           <ChatWindow />
         </div>
       ) : (

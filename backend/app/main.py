@@ -83,7 +83,7 @@ async def chat_messages(receiver: models.Receiver, db: database.DB, current_user
     return message_list
 
 
-@app.post("/friends")
+@app.get("/friends")
 async def friends(db: database.DB, current_user: TU) -> list[models.UserOut]:
     users = db.query(models.User).all()
     return [models.UserOut(username=u.username,full_name=u.full_name) for u in users]

@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import styles from './LoginForm.module.scss';
 import { login } from '../../api/api';
 import { AuthContext } from '../../contexts/AuthContext';
+import Cookies from 'js-cookie';
 
 const LoginForm = () => {
   const [username, setUsername] = useState<string>('');
@@ -14,8 +15,6 @@ const LoginForm = () => {
   const getLoginStatus = useCallback(async () => {
     try {
       const response = await login(username, password);
-      console.log('here!!!!');
-      console.log(' response -> ', response);
 
       if (response.status == 200) {
         console.log('here');
@@ -23,6 +22,7 @@ const LoginForm = () => {
         setSuccess(true);
         setLoggedIn(true);
         setContextUsername(username);
+        Cookies.set('Token', 'true', { expires: 15 * 60 * 1000 });
       } else {
         setSuccess(false);
       }
