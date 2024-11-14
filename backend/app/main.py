@@ -50,6 +50,20 @@ async def on_startup():
     db = next(database.get_session())
     add_users(db)
 
+active_connections: list[fastapi.WebSocket] = []
+
+@app.websocket("/ws/{username}")
+async def websocket_endpoint(websocket: fastapi.WebSocket, username: str):
+    await websocket.accept()
+    active_connections.append((username, websocket))
+    try:
+        while True:
+            # Keep the connection open and await messages (optional)
+            data = await websocket.receive_text()
+            # Handle received data if needed (e.g., for acknowledgments)
+    except fastapi.WebSocketDisconnect:
+        active_connections.remove((username, websocket))
+
 @app.post("/send_message")
 async def send_message(message: models.MessageIn, db: database.DB, current_user: TU):
     # Retrieve the receiver based on the username from the MessageIn model
@@ -65,6 +79,12 @@ async def send_message(message: models.MessageIn, db: database.DB, current_user:
     db.add(new_message)
     db.commit()
     db.refresh(new_message)
+
+    # Notify the receiver if they are connected via WebSocket
+    for username, websocket in active_connections:
+        if username == message.receiver:
+            await websocket.send_text(f"New message from {current_user.username}: {message.message}")
+
     return {"message": "Message sent successfully"}
 
 @app.post("/chat_messages")
