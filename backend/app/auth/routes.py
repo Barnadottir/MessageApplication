@@ -64,19 +64,6 @@ async def token_to_user(db:database.DB,token: str = Depends(oauth2_scheme)):
         raise fastapi.HTTPException(status_code=401, detail="User not found")
     return user
 
-
-async def _token_to_user(db: database.DB, request: fastapi.Request):
-    """Get the current user from the token"""
-    print('token_to_user')
-    username = utils.JWT.decode(token)
-    print(f'Decoded: {username}')
-    if not username:
-        raise fastapi.HTTPException(status_code=401, detail="Not authenticated")
-    user = get_user(username,db)
-    if not user:
-        raise fastapi.HTTPException(status_code=401, detail="User not found")
-    return user
-
 TU = Annotated[models.User,Depends(token_to_user)]
 
 router = fastapi.APIRouter(

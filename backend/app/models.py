@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, validator, SecretStr
 from sqlmodel import Field, SQLModel
 import re,datetime
 
@@ -45,3 +45,7 @@ class Receiver(BaseModel):
 class MessagesOut(BaseModel):
     message: str
     timestamp: datetime.datetime
+
+class UserOut(BaseModel):
+    username: str
+    full_name: str

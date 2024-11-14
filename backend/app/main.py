@@ -66,7 +66,6 @@ async def send_message(message: models.MessageIn, db: database.DB, current_user:
     db.refresh(new_message)
     return {"message": "Message sent successfully"}
 
-
 @app.post("/chat_messages")
 async def chat_messages(receiver: models.Receiver, db: database.DB, current_user: TU) -> list[models.MessagesOut]:
     receiver_user = db.query(models.User).filter(models.User.username == receiver.receiver).first()
@@ -77,10 +76,14 @@ async def chat_messages(receiver: models.Receiver, db: database.DB, current_user
         (models.Message.sender_id == current_user.id) &
         (models.Message.receiver_id == receiver_user.id)
     ).all()
-
     message_list = [
         models.MessagesOut(message=message.message,timestamp=message.timestamp)
         for message in messages
     ]
-
     return message_list
+
+
+@app.post("/friends")
+async def friends(db: database.DB, current_user: TU) -> list[models.UserOut]:
+    users = db.query(models.User).all()
+    return [models.UserOut(username=u.username,full_name=u.full_name) for u in users]
