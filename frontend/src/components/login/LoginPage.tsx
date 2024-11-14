@@ -16,7 +16,6 @@ const LoginPage = () => {
             setFormState((prev) => (prev === 'login' ? 'signup' : 'login'));
             console.log('click');
           }}
-          styles={{ position: 'fixed', top: '20%;' }}
         >
           {formState}
         </ToggleButton>

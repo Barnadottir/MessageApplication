@@ -1,10 +1,14 @@
 import React from 'react';
 import LoginPage from './components/login/LoginPage';
+import { AuthProvider } from './contexts/AuthContext';
+import HomePage from './components/HomePage';
 
 function App() {
   return (
     <>
-      <LoginPage />
+      <AuthProvider>
+        <HomePage />
+      </AuthProvider>
     </>
   );
 }

@@ -27,10 +27,6 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-const unprotectedRoute = axios.create({
-  baseURL: 'http://localhost:8000/',
-});
-
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => Promise.reject(handleAxiosError(error)),
