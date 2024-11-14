@@ -73,3 +73,11 @@ export const getFriendsList = async () => {
   const response = await axiosInstance.get('/friends');
   return response;
 };
+
+export const sendMessage = async (message: string, receiver: string) => {
+  const response = await axiosInstance.post('/send_message', {
+    message,
+    receiver,
+  });
+  return response;
+};
