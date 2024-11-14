@@ -18,27 +18,28 @@ const ChatWindow = () => {
 
   console.log('username -> ', username);
 
+  const fetchData = async () => {
+    try {
+      const response = await getChatMessages(friend);
+      setChatData(response.data);
+    } catch (error) {
+      console.error('Error fetching chat messages:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getChatMessages(friend);
-        setChatData(response.data);
-      } catch (error) {
-        console.error('Error fetching chat messages:', error);
-      }
-    };
-
     fetchData();
+  }, [friend]);
 
+  useEffect(() => {
     // Set up WebSocket connection
     const socket = new WebSocket(`ws://localhost:8000/ws/chat/${username}`);
 
     // Listen for incoming messages
     socket.onmessage = (event) => {
-      //const newMessage: ChatData = JSON.parse(event.data);
       console.log('new message -> ', event);
 
-      //setChatData((prevChatData) => [...prevChatData, newMessage]);
+      fetchData();
     };
 
     // Handle WebSocket errors

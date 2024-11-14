@@ -14,7 +14,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loggedIn, setLoggedIn] = useState<boolean>(
     Cookies.get('Token') ? true : false,
   );
-  const [username, setUsername] = useState<string | null>(null);
+  const [username, setUsername] = useState<string>(
+    Cookies.get('username') ?? '',
+  );
 
   return (
     <AuthContext.Provider

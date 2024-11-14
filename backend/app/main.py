@@ -14,7 +14,7 @@ app = fastapi.FastAPI(default_response_class=ORJSONResponse)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Allow all origins, or specify a list of allowed origins
+    allow_origins=["*"],  # http://localhost:5173 Allow all origins, or specify a list of allowed origins
     allow_credentials=True,
     allow_methods=["*"],  # Allow all methods
     allow_headers=["*"],  # Allow all headers
@@ -54,15 +54,18 @@ active_connections: list[fastapi.WebSocket] = []
 
 @app.websocket("/ws/{username}")
 async def websocket_endpoint(websocket: fastapi.WebSocket, username: str):
+    print(f'New active connection {username}')
     await websocket.accept()
     active_connections.append((username, websocket))
     try:
         while True:
             # Keep the connection open and await messages (optional)
             data = await websocket.receive_text()
+            print(f'New data {data}')
             # Handle received data if needed (e.g., for acknowledgments)
     except fastapi.WebSocketDisconnect:
         active_connections.remove((username, websocket))
+        print(f'Connection disconnect {username}')
 
 @app.post("/send_message")
 async def send_message(message: models.MessageIn, db: database.DB, current_user: TU):
@@ -82,7 +85,9 @@ async def send_message(message: models.MessageIn, db: database.DB, current_user:
 
     # Notify the receiver if they are connected via WebSocket
     for username, websocket in active_connections:
+        print(f'existing connection {username}')
         if username == message.receiver:
+            print(f'Notifies {username} of message')
             await websocket.send_text(f"New message from {current_user.username}: {message.message}")
 
     return {"message": "Message sent successfully"}
@@ -99,7 +104,7 @@ async def chat_messages(receiver: models.Receiver, db: database.DB, current_user
         ).all()
     else:
         messages = []
-    id2username = {user.id:user.username for user in [receiver_user,current_user]}
+    id2username = {user.id:user.username for user in [receiver_user,current_user] if user is not None}
     message_list = [
         models.MessagesOut(message=message.message,timestamp=message.timestamp,sender=id2username[message.sender_id],receiver=id2username[message.receiver_id])
         for message in messages

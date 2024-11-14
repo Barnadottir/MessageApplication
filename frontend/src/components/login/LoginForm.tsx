@@ -23,6 +23,7 @@ const LoginForm = () => {
         setLoggedIn(true);
         setContextUsername(username);
         Cookies.set('Token', 'true', { expires: 15 * 60 * 1000 });
+        Cookies.set('username', username, { expires: 15 * 60 * 1000 });
       } else {
         setSuccess(false);
       }
