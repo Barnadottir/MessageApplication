@@ -52,7 +52,7 @@ async def on_startup():
 
 active_connections: list[fastapi.WebSocket] = []
 
-@app.websocket("/ws/{username}")
+@app.websocket("/ws/chat/{username}")
 async def websocket_endpoint(websocket: fastapi.WebSocket, username: str):
     print(f'New active connection {username}')
     await websocket.accept()

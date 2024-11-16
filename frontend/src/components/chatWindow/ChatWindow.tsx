@@ -33,6 +33,7 @@ const ChatWindow = () => {
 
   useEffect(() => {
     const socket = new WebSocket(`ws://localhost:8000/ws/chat/${username}`);
+    console.log('socket -> ', socket);
 
     socket.onmessage = (event) => {
       console.log('new message -> ', event);
@@ -68,7 +69,10 @@ const ChatWindow = () => {
     <div className={styles['chatwindow--wrapper']}>
       <div className={styles['chatwindow--messages']}>
         {chatData.map((chat, index) => (
-          <div key={index} className={`${styles.message} ${chat.sender === friend ? styles.received : styles.sent}`}>
+          <div
+            key={index}
+            className={`${styles.message} ${chat.sender === friend ? styles.received : styles.sent}`}
+          >
             <p>{chat.message}</p>
             <span className={styles.timestamp}>{chat.timestamp}</span>
           </div>
