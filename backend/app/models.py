@@ -2,6 +2,8 @@ from pydantic import BaseModel, EmailStr, validator, SecretStr
 from sqlmodel import Field, SQLModel
 import re,datetime
 
+from . import get_current_timestamp
+
 class User(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     username: str = Field(sa_column=Field(unique=True))
@@ -14,7 +16,7 @@ class Message(SQLModel, table=True):
     sender_id: int = Field(foreign_key="user.id")
     receiver_id: int = Field(foreign_key="user.id")
     message: str = Field(..., nullable=False)
-    timestamp: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
+    timestamp: int = Field(default_factory=lambda: get_current_timestamp)
 
 # Model for user creation (signup)
 class SignupIn(BaseModel):

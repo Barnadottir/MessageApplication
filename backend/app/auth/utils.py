@@ -2,8 +2,7 @@ from passlib.context import CryptContext
 import datetime,time
 import jwt
 
-def get_current_timestamp() -> int:
-    return int(datetime.datetime.now(datetime.timezone.utc).timestamp())
+from .. import get_current_timestamp
 
 class JWT:
     algorithm = "HS256"

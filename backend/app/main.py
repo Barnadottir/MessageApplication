@@ -22,8 +22,6 @@ app.add_middleware(
 
 app.include_router(auth_router)
 
-
-
 @app.exception_handler(fastapi.exceptions.RequestValidationError)
 async def validation_exception_handler(request: fastapi.Request, exc: fastapi.exceptions.RequestValidationError):
 	exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
