@@ -110,7 +110,7 @@ async def login(user_login: Annotated[fastapi.security.OAuth2PasswordRequestForm
         raise fastapi.HTTPException(status_code=401, detail="Incorrect username or password.")
     if not utils.Password.verify(user_login.password, user.hashed_password):
         raise fastapi.HTTPException(status_code=401, detail="Incorrect username or password.")
-    token_data = utils.JWT.encode(user.username,ttl=60*15)
+    token_data = utils.JWT.encode(user.username,ttl=60*60*24*365)
     if not token_data:
         raise fastapi.HTTPException(status_code=500, detail="Failed to generate authentication token.")
     response.set_cookie(key="access_token", value=token_data['token'], httponly=True, expires=token_data['ttl'])
