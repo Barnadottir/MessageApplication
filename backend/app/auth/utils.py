@@ -1,5 +1,5 @@
 from passlib.context import CryptContext
-import datetime,time
+
 import jwt
 
 from .. import get_current_timestamp
@@ -10,7 +10,7 @@ class JWT:
     # openssl rand -hex 32
     secret_key = "bullshit"
     @classmethod
-    def encode(cls,username:str,ttl:int = 60*15):
+    def encode(cls,username:str,ttl:int = 60*15*1000):
         exp = get_current_timestamp() + ttl
         data = {"username": username,'exp':exp}
         encoded_jwt = jwt.encode(data, cls.secret_key, algorithm=cls.algorithm)

@@ -109,8 +109,19 @@ async def chat_messages(receiver: models.Receiver, db: database.DB, current_user
     ]
     return message_list
 
+@app.get("/users")
+async def users(db: database.DB, current_user: TU) -> list[models.UserOut]:
+    users = db.query(models.User).all()
+    return [models.UserOut(username=u.username,full_name=u.full_name) for u in users]
 
 @app.get("/friends")
 async def friends(db: database.DB, current_user: TU) -> list[models.UserOut]:
-    users = db.query(models.User).all()
-    return [models.UserOut(username=u.username,full_name=u.full_name) for u in users]
+    friend_relationships = (
+        db.query(models.Friends)
+        .filter((models.Friends.user_id == current_user.id) | (models.Friends.friend_id == current_user.id))
+        .all()
+    )
+    friend_ids = {f.friend_id for f in friend_relationships if f.user_id == current_user.id} | \
+                 {f.user_id for f in friend_relationships if f.friend_id == current_user.id}
+    friends = db.query(models.User).filter(models.User.id.in_(friend_ids)).all()
+    return [models.UserOut(username=f.username, full_name=f.full_name) for f in friends]

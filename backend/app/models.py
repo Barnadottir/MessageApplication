@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr, validator, SecretStr
 from sqlmodel import Field, SQLModel
+from sqlalchemy import UniqueConstraint
 import re,datetime
 
 from . import get_current_timestamp
@@ -10,6 +11,13 @@ class User(SQLModel, table=True):
     email: EmailStr = Field(sa_column=Field(unique=True))
     full_name: str
     hashed_password: str
+
+class Friends(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id")
+    friend_id: int = Field(foreign_key="user.id")
+
+    __table_args__ = (UniqueConstraint('user_id', 'friend_id'),)
 
 class Message(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
