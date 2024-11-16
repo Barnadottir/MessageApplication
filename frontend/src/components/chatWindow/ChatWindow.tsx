@@ -32,22 +32,18 @@ const ChatWindow = () => {
   }, [friend]);
 
   useEffect(() => {
-    // Set up WebSocket connection
     const socket = new WebSocket(`ws://localhost:8000/ws/chat/${username}`);
 
-    // Listen for incoming messages
     socket.onmessage = (event) => {
       console.log('new message -> ', event);
 
       fetchData();
     };
 
-    // Handle WebSocket errors
     socket.onerror = (error) => {
       console.error('WebSocket error:', error);
     };
 
-    // Clean up WebSocket connection when component unmounts or friend changes
     return () => socket.close();
   }, [friend]);
 
@@ -72,12 +68,7 @@ const ChatWindow = () => {
     <div className={styles['chatwindow--wrapper']}>
       <div className={styles['chatwindow--messages']}>
         {chatData.map((chat, index) => (
-          <div
-            key={index}
-            className={`${styles.message} ${
-              chat.sender === friend ? styles.received : styles.sent
-            }`}
-          >
+          <div key={index} className={`${styles.message} ${chat.sender === friend ? styles.received : styles.sent}`}>
             <p>{chat.message}</p>
             <span className={styles.timestamp}>{chat.timestamp}</span>
           </div>
