@@ -20,6 +20,7 @@ class OAuth2PasswordBearerWithCookie(fastapi.security.OAuth2):
             password={"tokenUrl": tokenUrl, "scopes": scopes}
         )
         super().__init__(flows=flows, scheme_name=scheme_name, auto_error=auto_error)
+        self.blacklist = utils.ExpiringList()
 
     def handle_exception(self):
         if self.auto_error:
@@ -35,6 +36,8 @@ class OAuth2PasswordBearerWithCookie(fastapi.security.OAuth2):
         authorization: str = request.headers.get("Authorization")
         access_token = request.cookies.get("access_token")
         scheme, param = fastapi.security.utils.get_authorization_scheme_param(authorization)
+        if access_token is not None and access_token in self.blacklist.items:
+            self.handle_exception()
         if authorization is not None:
             print('Authentication using authorization.')
             if scheme.lower() != "bearer":
@@ -55,7 +58,7 @@ def get_user(username: str, db: database.Session) -> models.User:
 
 async def token_to_user(db:database.DB,token: str = Depends(oauth2_scheme)):
     """Get the current user from the token"""
-    username = utils.JWT.decode(token)
+    username = utils.JWT.decode(token).get("username")
     print(f'Decoded: {username}')
     if not username:
         raise fastapi.HTTPException(status_code=401, detail="Not authenticated")
@@ -65,6 +68,21 @@ async def token_to_user(db:database.DB,token: str = Depends(oauth2_scheme)):
     return user
 
 TU = Annotated[models.User,Depends(token_to_user)]
+
+# Add an admin user if not already present
+def add_admin(db):
+    user = models.SignupIn(
+        username='admin',
+        email='mixsam36@gmail.com',
+        full_name='Alexander Samson',
+        password='admin',
+    )
+    if not get_user(user.username,db):
+        hashed_password = utils.Password.hash(user.password)
+        new_user = models.User(**user.dict(), hashed_password=hashed_password)
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
 
 router = fastapi.APIRouter(
     prefix='/auth',
@@ -84,6 +102,7 @@ async def signup(user_create: models.SignupIn, db: database.DB) -> models.Signup
     db.refresh(new_user)
 
     return models.SignupOut(message="Signed up successfully!")
+
 @router.post("/login")
 async def login(user_login: Annotated[fastapi.security.OAuth2PasswordRequestForm, Depends()], response: fastapi.Response, db: database.DB) -> models.Token:
     user = db.query(models.User).filter(models.User.username == user_login.username).first()
@@ -91,8 +110,17 @@ async def login(user_login: Annotated[fastapi.security.OAuth2PasswordRequestForm
         raise fastapi.HTTPException(status_code=401, detail="Incorrect username or password.")
     if not utils.Password.verify(user_login.password, user.hashed_password):
         raise fastapi.HTTPException(status_code=401, detail="Incorrect username or password.")
-    token_data = utils.JWT.encode(user.username)
+    token_data = utils.JWT.encode(user.username,ttl=60*15)
     if not token_data:
         raise fastapi.HTTPException(status_code=500, detail="Failed to generate authentication token.")
-    response.set_cookie(key="access_token", value=token_data['token'], httponly=True, expires=token_data['timeout'].total_seconds())
+    response.set_cookie(key="access_token", value=token_data['token'], httponly=True, expires=token_data['ttl'])
     return models.Token(access_token=token_data['token'], token_type="bearer")
+
+@router.get("/logout")
+async def protected_route(_: TU,token: str = Depends(oauth2_scheme)):
+    d = utils.JWT.decode(token)
+    username = d.get("username")
+    if username:
+        print(f'Logging out: {d}')
+        oauth2_scheme.blacklist.add(token,d['exp'])
+    return {}
