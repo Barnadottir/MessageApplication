@@ -14,10 +14,10 @@ app = fastapi.FastAPI(default_response_class=ORJSONResponse)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173",'ws://localhost:5173'],  # http://localhost:5173 Allow all origins, or specify a list of allowed origins
+    allow_origins=["http://localhost",'http://localhost:5173'],  # http://localhost:5173 Allow all origins, or specify a list of allowed origins
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(auth_router)
