@@ -70,7 +70,7 @@ export const getChatMessages = async (receiver: string) => {
 };
 
 export const getFriendsList = async () => {
-  const response = await axiosInstance.get('/friends');
+  const response = await axiosInstance.get('/users');
   return response;
 };
 
