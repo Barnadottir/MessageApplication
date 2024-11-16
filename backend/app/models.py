@@ -24,7 +24,7 @@ class Message(SQLModel, table=True):
     sender_id: int = Field(foreign_key="user.id")
     receiver_id: int = Field(foreign_key="user.id")
     message: str = Field(..., nullable=False)
-    timestamp: int = Field(default_factory=lambda: get_current_timestamp)
+    timestamp: int = Field(default_factory=get_current_timestamp)
 
 # Model for user creation (signup)
 class SignupIn(BaseModel):
