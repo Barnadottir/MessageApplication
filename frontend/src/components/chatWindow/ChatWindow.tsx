@@ -1,8 +1,10 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import styles from './ChatWindow.module.scss';
 import { getChatMessages, sendMessage } from '../../api/api';
 import { FriendContext } from '../../contexts/FriendContext';
 import { AuthContext } from '../../contexts/AuthContext';
+import notifcationSound from '../../assets/notifcationSound.wav';
+import { useScroll } from '../../hooks/styleHooks';
 
 interface ChatData {
   message: string;
@@ -15,8 +17,8 @@ const ChatWindow = () => {
   const [chatData, setChatData] = useState<ChatData[]>([]);
   const { friend } = useContext(FriendContext);
   const { username } = useContext(AuthContext);
-
-  console.log('username -> ', username);
+  const { setScrollable } = useScroll();
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const fetchData = async () => {
     try {
@@ -31,14 +33,31 @@ const ChatWindow = () => {
     fetchData();
   }, [friend]);
 
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatData]);
+
   useEffect(() => {
     const socket = new WebSocket(`ws://localhost:8000/ws/chat/${username}`);
     console.log('socket -> ', socket);
 
+    const playAlertSound = () => {
+      const audio = new Audio(notifcationSound);
+      audio.play().catch((error) => {
+        console.error('Error playing alert sound:', error);
+      });
+    };
+
     socket.onmessage = (event) => {
       console.log('new message -> ', event);
-
       fetchData();
+      playAlertSound();
     };
 
     socket.onerror = (error) => {
@@ -46,13 +65,11 @@ const ChatWindow = () => {
     };
 
     return () => socket.close();
-  }, [friend]);
+  }, [friend, username]);
 
   const sendCurrentMessage = useCallback(async () => {
-    // Send message through REST API
     await sendMessage(currentMessage, friend);
 
-    // Optionally, manually update chatData if you want an instant update in the UI
     setChatData((prevChatData) => [
       ...prevChatData,
       {
@@ -67,7 +84,11 @@ const ChatWindow = () => {
 
   return (
     <div className={styles['chatwindow--wrapper']}>
-      <div className={styles['chatwindow--messages']}>
+      <div
+        ref={scrollRef}
+        className={styles['chatwindow--messages']}
+        onMouseEnter={() => setScrollable(false)}
+      >
         {chatData.map((chat, index) => (
           <div
             key={index}
@@ -78,14 +99,16 @@ const ChatWindow = () => {
           </div>
         ))}
       </div>
-      <input
-        type="text"
-        value={currentMessage}
-        onChange={(e) => setCurrentMessage(e.target.value)}
-        placeholder="Write a message..."
-        className={styles['chatwindow--input']}
-        onKeyDown={(e) => e.key === 'Enter' && sendCurrentMessage()}
-      />
+      <div className={styles['chatWindow-input--wrapper']}>
+        <input
+          type="text"
+          value={currentMessage}
+          onChange={(e) => setCurrentMessage(e.target.value)}
+          placeholder="Write a message..."
+          className={styles['chatwindow--input']}
+          onKeyDown={(e) => e.key === 'Enter' && sendCurrentMessage()}
+        />
+      </div>
     </div>
   );
 };

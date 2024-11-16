@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import styles from './FriendList.module.scss';
 import { getFriendsList } from '../../api/api';
 import { FriendContext } from '../../contexts/FriendContext';
+import { AuthContext } from '../../contexts/AuthContext';
 
 interface FriendListType {
   username: string;
@@ -13,6 +14,7 @@ const FriendList = () => {
     null,
   );
   const { setFriend } = useContext(FriendContext);
+  const { username } = useContext(AuthContext);
 
   useEffect(() => {
     const getFriends = async () => {
@@ -24,6 +26,7 @@ const FriendList = () => {
 
   return (
     <div className={styles['friendlist--wrapper']}>
+      <h2>Welcome {username}</h2>
       <h2 className={styles['friendlist--title']}>Friend List</h2>
       <div className={styles['friendlist--container']}>
         {friendList &&
