@@ -58,7 +58,6 @@ class MessagesOut(BaseModel):
     receiver: str
     message: str
 
-
 class UserOut(BaseModel):
     username: str
     full_name: str

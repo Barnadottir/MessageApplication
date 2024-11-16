@@ -125,3 +125,14 @@ async def friends(db: database.DB, current_user: TU) -> list[models.UserOut]:
                  {f.user_id for f in friend_relationships if f.friend_id == current_user.id}
     friends = db.query(models.User).filter(models.User.id.in_(friend_ids)).all()
     return [models.UserOut(username=f.username, full_name=f.full_name) for f in friends]
+
+@app.get("/search_users")
+async def search_users(db: database.DB, current_user: TU, query: str) -> list[models.UserOut]:
+    # Perform case-insensitive search on both username and full_name
+    search_results = db.query(models.User).filter(
+        sqlalchemy.or_(
+            models.User.username.ilike(f"%{query}%"),
+            models.User.full_name.ilike(f"%{query}%")
+        )
+    ).all()
+    return [models.UserOut(username=u.username, full_name=u.full_name) for u in search_results]
