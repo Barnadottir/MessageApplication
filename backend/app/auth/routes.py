@@ -113,7 +113,7 @@ async def login(user_login: Annotated[fastapi.security.OAuth2PasswordRequestForm
     token_data = utils.JWT.encode(user.username,ttl=60*60*24*365*1000)
     if not token_data:
         raise fastapi.HTTPException(status_code=500, detail="Failed to generate authentication token.")
-    response.set_cookie(key="access_token", value=token_data['token'], httponly=True, expires=token_data['ttl'])
+    response.set_cookie(key="access_token", value=token_data['token'], httponly=True, expires=token_data['ttl'],samesite="none", secure=True)
     return models.Token(access_token=token_data['token'], token_type="bearer")
 
 @router.get("/logout")
