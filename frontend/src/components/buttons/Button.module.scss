@@ -1,0 +1,14 @@
+.Button {
+  overflow: hidden;
+  width: 100px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  background: black;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}

@@ -1,4 +1,4 @@
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { createContext, useState, ReactNode, useEffect } from 'react';
 import Cookies from 'js-cookie';
 
 interface AuthContextProps {
@@ -17,6 +17,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [username, setUsername] = useState<string>(
     Cookies.get('username') ?? '',
   );
+
+  useEffect(() => {
+    if (!loggedIn) Cookies.remove('Token');
+  }, [loggedIn]);
+
+  useEffect(() => {
+    if (!username) Cookies.remove('username');
+  }, [username]);
 
   return (
     <AuthContext.Provider

@@ -24,11 +24,8 @@ const handleAxiosError = (error) => {
 };
 
 const axiosInstance = axios.create({
-  baseURL: 'https://af2c-89-253-80-225.ngrok-free.app',
+  baseURL: 'http://localhost:8000/',
   withCredentials: true,
-  headers: {
-    'ngrok-skip-browser-warning': '69420',
-  },
 });
 
 axiosInstance.interceptors.response.use(
@@ -85,8 +82,13 @@ export const sendMessage = async (message: string, receiver: string) => {
 };
 
 export const searchUsers = async (query: string) => {
-  const response = await axiosInstance.get('/search_users', {
+  const response = await axiosInstance.get('auth/search_users', {
     params: { query: query },
   });
+  return response;
+};
+
+export const logout = async () => {
+  const response = await axiosInstance.get('/auth/logout');
   return response;
 };

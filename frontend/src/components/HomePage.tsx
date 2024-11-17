@@ -8,7 +8,6 @@ import { FriendProvider } from '../contexts/FriendContext';
 
 const HomePage = () => {
   const { loggedIn } = useContext(AuthContext);
-  console.log('loggedin -> ', loggedIn);
 
   return (
     <div className={styles['homepage--wrapper']}>

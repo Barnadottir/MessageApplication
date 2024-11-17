@@ -4,6 +4,7 @@ import { getFriendsList } from '../../api/api';
 import { FriendContext } from '../../contexts/FriendContext';
 import { AuthContext } from '../../contexts/AuthContext';
 import UsersSearch from '../usersSearch/UsersSearch';
+import Logout from '../logout/Logout';
 
 interface FriendListType {
   username: string;
@@ -29,7 +30,7 @@ const FriendList = () => {
   return (
     <div className={styles['friendlist--wrapper']}>
       <h2>Welcome {username}</h2>
-      <h2 className={styles['friendlist--title']}>Friend List</h2>
+      <Logout />
       <UsersSearch users={users} setUsers={setUsers} />
       {!users ? (
         <div className={styles['friendlist--container']}>
