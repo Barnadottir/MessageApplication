@@ -3,6 +3,7 @@ import styles from './FriendList.module.scss';
 import { getFriendsList } from '../../api/api';
 import { FriendContext } from '../../contexts/FriendContext';
 import { AuthContext } from '../../contexts/AuthContext';
+import UsersSearch from '../usersSearch/UsersSearch';
 
 interface FriendListType {
   username: string;
@@ -15,6 +16,7 @@ const FriendList = () => {
   );
   const { setFriend } = useContext(FriendContext);
   const { username } = useContext(AuthContext);
+  const [users, setUsers] = useState<Array<string> | null>(null);
 
   useEffect(() => {
     const getFriends = async () => {
@@ -28,22 +30,44 @@ const FriendList = () => {
     <div className={styles['friendlist--wrapper']}>
       <h2>Welcome {username}</h2>
       <h2 className={styles['friendlist--title']}>Friend List</h2>
-      <div className={styles['friendlist--container']}>
-        {friendList &&
-          friendList.map((friend) => (
+      <UsersSearch users={users} setUsers={setUsers} />
+      {!users ? (
+        <div className={styles['friendlist--container']}>
+          {friendList &&
+            friendList.map((friend) => (
+              <div
+                key={friend.username}
+                className={styles['friend-card']}
+                onClick={() => setFriend(friend.username)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) =>
+                  e.key === 'Enter' && setFriend(friend.username)
+                }
+              >
+                <div className={styles['friend-name']}>{friend.full_name}</div>
+                <div className={styles['friend-username']}>
+                  {friend.username}
+                </div>
+              </div>
+            ))}
+        </div>
+      ) : (
+        <div className={styles['friendlist--container']}>
+          {users.map((user) => (
             <div
-              key={friend.username}
+              key={user}
               className={styles['friend-card']}
-              onClick={() => setFriend(friend.username)}
+              onClick={() => {}}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && setFriend(friend.username)}
             >
-              <div className={styles['friend-name']}>{friend.full_name}</div>
-              <div className={styles['friend-username']}>{friend.username}</div>
+              <div className={styles['friend-name']}>{user}</div>
+              <div className={styles['friend-username']}>{user}</div>
             </div>
           ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -5,16 +5,43 @@ from fastapi.responses import ORJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import sqlalchemy
 import logging
+import ngrok
+import uvicorn
 
 from . import models, database
 from .auth.routes import router as auth_router,TU,get_user,utils
 
 
-app = fastapi.FastAPI(default_response_class=ORJSONResponse)
+from contextlib import asynccontextmanager
+from os import getenv
+from dotenv import load_dotenv
+load_dotenv()
+
+
+
+NGROK_AUTH_TOKEN = getenv("NGROK_AUTH_TOKEN", "")
+NGROK_EDGE = getenv("NGROK_EDGE", "edge:edghts_")
+APPLICATION_PORT = 8000
+
+# ngrok free tier only allows one agent. So we tear down the tunnel on application termination
+@asynccontextmanager
+async def lifespan(app: fastapi.FastAPI):
+    print("Setting up Ngrok Tunnel")
+    ngrok.set_auth_token(NGROK_AUTH_TOKEN)
+    ngrok.forward(
+        addr=APPLICATION_PORT,
+        labels=NGROK_EDGE,
+        proto="labeled",
+    )
+    yield
+    print("Tearing Down Ngrok Tunnel")
+    ngrok.disconnect()
+
+app = fastapi.FastAPI(lifespan=lifespan,default_response_class=ORJSONResponse)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['http://localhost:5173'],  # http://localhost:5173 Allow all origins, or specify a list of allowed origins
+    allow_origins=['http://localhost:5173', 'https://eb4c-89-253-80-225.ngrok-free.app'],  # http://localhost:5173 Allow all origins, or specify a list of allowed origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -136,3 +163,9 @@ async def search_users(db: database.DB, current_user: TU, query: str) -> list[mo
         )
     ).all()
     return [models.UserOut(username=u.username, full_name=u.full_name) for u in search_results]
+
+
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="127.0.0.1", port=APPLICATION_PORT, reload=True)

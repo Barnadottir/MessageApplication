@@ -2,7 +2,6 @@ import axios, { AxiosError } from 'axios';
 import Cookies from 'js-cookie';
 
 const handleAxiosError = (error) => {
-  console.log('error -> ', error);
   if (error.response) {
     const { status, data } = error.response;
     switch (status) {
@@ -25,8 +24,11 @@ const handleAxiosError = (error) => {
 };
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8000/',
+  baseURL: 'https://af2c-89-253-80-225.ngrok-free.app',
   withCredentials: true,
+  headers: {
+    'ngrok-skip-browser-warning': '69420',
+  },
 });
 
 axiosInstance.interceptors.response.use(
@@ -78,6 +80,13 @@ export const sendMessage = async (message: string, receiver: string) => {
   const response = await axiosInstance.post('/send_message', {
     message,
     receiver,
+  });
+  return response;
+};
+
+export const searchUsers = async (query: string) => {
+  const response = await axiosInstance.get('/search_users', {
+    params: { query: query },
   });
   return response;
 };
