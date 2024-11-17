@@ -61,3 +61,6 @@ class MessagesOut(BaseModel):
 class UserOut(BaseModel):
     username: str
     full_name: str
+
+class AddFriendIn(BaseModel):
+    username: str

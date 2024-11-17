@@ -1,3 +1,4 @@
+import os
 from typing import Annotated
 import fastapi
 from fastapi import Depends
@@ -11,37 +12,39 @@ import uvicorn
 from . import models, database
 from .auth.routes import router as auth_router,TU,get_user,utils
 
-
 from contextlib import asynccontextmanager
-from os import getenv
 from dotenv import load_dotenv
 load_dotenv()
 
+MODE = os.environ["MODE"]
+assert MODE in ['prod','dev']
+ORIGINS = os.environ["ORIGINS"].split(' ')
+APPLICATION_PORT = int(os.environ["PORT"])
 
+if MODE=='prod':
+    # ngrok free tier only allows one agent. So we tear down the tunnel on application termination
+    @asynccontextmanager
+    async def lifespan(app: fastapi.FastAPI):
+        print("Setting up Ngrok Tunnel")
+        ngrok.set_auth_token(os.environ["NGROK_AUTH_TOKEN"])
+        ngrok.forward(
+            addr=APPLICATION_PORT,
+            labels=os.environ.get("NGROK_EDGE","edge:edghts_"),
+            proto="labeled",
+        )
+        yield
+        print("Tearing Down Ngrok Tunnel")
+        ngrok.disconnect()
+else:
+    lifespan = None
 
-NGROK_AUTH_TOKEN = getenv("NGROK_AUTH_TOKEN", "")
-NGROK_EDGE = getenv("NGROK_EDGE", "edge:edghts_")
-APPLICATION_PORT = 8000
-
-# ngrok free tier only allows one agent. So we tear down the tunnel on application termination
-@asynccontextmanager
-async def lifespan(app: fastapi.FastAPI):
-    print("Setting up Ngrok Tunnel")
-    ngrok.set_auth_token(NGROK_AUTH_TOKEN)
-    ngrok.forward(
-        addr=APPLICATION_PORT,
-        labels=NGROK_EDGE,
-        proto="labeled",
-    )
-    yield
-    print("Tearing Down Ngrok Tunnel")
-    ngrok.disconnect()
 
 app = fastapi.FastAPI(lifespan=lifespan,default_response_class=ORJSONResponse)
 
+origins =
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['http://localhost:5173', 'https://eb4c-89-253-80-225.ngrok-free.app'],  # http://localhost:5173 Allow all origins, or specify a list of allowed origins
+    allow_origins=ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -181,6 +184,7 @@ async def add_friend(
     new_friendship = models.Friends(user_id=current_user.id, friend_id=friend.id)
     db.add(new_friendship)
     db.commit()
+    db.refresh(new_friendship)
 
     return models.UserOut(username=friend.username, full_name=friend.full_name)
 
@@ -194,8 +198,6 @@ async def search_users(db: database.DB, current_user: TU, query: str) -> list[mo
         )
     ).all()
     return [models.UserOut(username=u.username, full_name=u.full_name) for u in search_results if u.id!=current_user.id]
-
-
 
 
 if __name__ == "__main__":
