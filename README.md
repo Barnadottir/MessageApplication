@@ -19,5 +19,5 @@ npm run dev
 ngrok start --config=ngrok.yml --all
 ```
 
-6. in /backend/main.py change allowed urls, to what is displayed after "forwarding" for the frontend
-7. in /frontend/api.py change allowed urls, axiosInstance URL to what is being displayed after "forwarding" for the backend
+2. in /backend/main.py change allowed urls, to what is displayed after "forwarding" for the frontend
+3. in /frontend/api.py change allowed urls, axiosInstance URL to what is being displayed after "forwarding" for the backend
