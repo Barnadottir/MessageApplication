@@ -22,6 +22,7 @@ const FriendList = () => {
   useEffect(() => {
     const getFriends = async () => {
       const response = await getFriendsList();
+
       setFriendList(response.data);
     };
     getFriends();
@@ -32,43 +33,49 @@ const FriendList = () => {
       <h2>Welcome {username}</h2>
       <Logout />
       <UsersSearch users={users} setUsers={setUsers} />
-      {!users ? (
-        <div className={styles['friendlist--container']}>
-          {friendList &&
-            friendList.map((friend) => (
-              <div
-                key={friend.username}
-                className={styles['friend-card']}
-                onClick={() => setFriend(friend.username)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) =>
-                  e.key === 'Enter' && setFriend(friend.username)
-                }
-              >
-                <div className={styles['friend-name']}>{friend.full_name}</div>
-                <div className={styles['friend-username']}>
-                  {friend.username}
-                </div>
-              </div>
-            ))}
-        </div>
-      ) : (
-        <div className={styles['friendlist--container']}>
-          {users.map((user) => (
-            <div
-              key={user}
-              className={styles['friend-card']}
-              onClick={() => {}}
-              role="button"
-              tabIndex={0}
-            >
-              <div className={styles['friend-name']}>{user}</div>
-              <div className={styles['friend-username']}>{user}</div>
+      <div style={{ position: 'relative' }}>
+        <div className={styles['style-cards--wrapper']}>
+          {!users ? (
+            <div className={styles['friendlist--container']}>
+              {friendList &&
+                friendList.map((friend) => (
+                  <div
+                    key={friend.username}
+                    className={styles['friend-card']}
+                    onClick={() => setFriend(friend.username)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) =>
+                      e.key === 'Enter' && setFriend(friend.username)
+                    }
+                  >
+                    <div className={styles['friend-name']}>
+                      {friend.full_name}
+                    </div>
+                    <div className={styles['friend-username']}>
+                      {friend.username}
+                    </div>
+                  </div>
+                ))}
             </div>
-          ))}
+          ) : (
+            <div className={styles['friendlist--container']}>
+              {users.map((user) => (
+                <div
+                  key={user}
+                  className={styles['friend-card']}
+                  onClick={() => {}}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div className={styles['friend-name']}>{user}</div>
+                  <div className={styles['friend-username']}>{user}</div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

@@ -69,7 +69,7 @@ export const getChatMessages = async (receiver: string) => {
 };
 
 export const getFriendsList = async () => {
-  const response = await axiosInstance.get('/users');
+  const response = await axiosInstance.get('/friends');
   return response;
 };
 
@@ -82,7 +82,7 @@ export const sendMessage = async (message: string, receiver: string) => {
 };
 
 export const searchUsers = async (query: string) => {
-  const response = await axiosInstance.get('auth/search_users', {
+  const response = await axiosInstance.get('search_users', {
     params: { query: query },
   });
   return response;

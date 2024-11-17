@@ -44,11 +44,8 @@
   }
 }
 
-.logout--wrapper {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  justify-content: center;
-  background: none;
-  padding-bottom: 1rem;
+.style-cards--wrapper {
+  flex: 100;
+  position: absolute;
+  transform: translateX(-50%);
 }

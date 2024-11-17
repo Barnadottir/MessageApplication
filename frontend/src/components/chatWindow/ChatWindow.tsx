@@ -5,6 +5,7 @@ import { FriendContext } from '../../contexts/FriendContext';
 import { AuthContext } from '../../contexts/AuthContext';
 import notifcationSound from '../../assets/notifcationSound.wav';
 import { useScroll } from '../../hooks/styleHooks';
+import { IoIosSend } from 'react-icons/io';
 
 interface ChatData {
   message: string;
