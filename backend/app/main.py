@@ -153,6 +153,37 @@ async def friends(db: database.DB, current_user: TU) -> list[models.UserOut]:
     friends = db.query(models.User).filter(models.User.id.in_(friend_ids)).all()
     return [models.UserOut(username=f.username, full_name=f.full_name) for f in friends]
 
+@app.post("/add_friend/{friend_username}", status_code=201)
+async def add_friend(
+    friend_username: str,
+    db: database.DB,
+    current_user: TU
+) -> models.UserOut:
+    # Find the friend user by username
+    friend = db.query(models.User).filter(models.User.username == friend_username).first()
+    if not friend:
+        raise fastapi.HTTPException(status_code=404, detail="User not found")
+
+    # Check if they're already friends
+    existing_friendship = db.query(models.Friends).filter(
+        ((models.Friends.user_id == current_user.id) & (models.Friends.friend_id == friend.id)) |
+        ((models.Friends.user_id == friend.id) & (models.Friends.friend_id == current_user.id))
+    ).first()
+
+    if existing_friendship:
+        raise fastapi.HTTPException(status_code=400, detail="Already friends with this user")
+
+    # Prevent adding self as friend
+    if current_user.id == friend.id:
+        raise fastapi.HTTPException(status_code=400, detail="Cannot add yourself as friend")
+
+    # Create new friendship
+    new_friendship = models.Friends(user_id=current_user.id, friend_id=friend.id)
+    db.add(new_friendship)
+    db.commit()
+
+    return models.UserOut(username=friend.username, full_name=friend.full_name)
+
 @app.get("/search_users")
 async def search_users(db: database.DB, current_user: TU, query: str) -> list[models.UserOut]:
     # Perform case-insensitive search on both username and full_name
@@ -162,7 +193,7 @@ async def search_users(db: database.DB, current_user: TU, query: str) -> list[mo
             models.User.full_name.ilike(f"%{query}%")
         )
     ).all()
-    return [models.UserOut(username=u.username, full_name=u.full_name) for u in search_results]
+    return [models.UserOut(username=u.username, full_name=u.full_name) for u in search_results if u.id!=current_user.id]
 
 
 
