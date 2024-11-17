@@ -38,10 +38,8 @@ if MODE=='prod':
 else:
     lifespan = None
 
-
 app = fastapi.FastAPI(lifespan=lifespan,default_response_class=ORJSONResponse)
 
-origins =
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ORIGINS,
