@@ -153,7 +153,7 @@ async def friends(db: database.DB, current_user: TU) -> list[models.UserOut]:
     friends = db.query(models.User).filter(models.User.id.in_(friend_ids)).all()
     return [models.UserOut(username=f.username, full_name=f.full_name) for f in friends]
 
-@app.post("/add_friend/{friend_username}", status_code=201)
+@app.post("/add_friend", status_code=201)
 async def add_friend(
     friend_username: str,
     db: database.DB,
