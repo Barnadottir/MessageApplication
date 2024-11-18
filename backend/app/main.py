@@ -1,4 +1,4 @@
-import os
+import os,json
 from typing import Annotated
 import fastapi
 from fastapi import Depends
@@ -6,14 +6,13 @@ from fastapi.responses import ORJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import sqlalchemy
 import logging
-import ngrok
-import uvicorn
 
 from . import models, database
 from .auth.routes import router as auth_router,TU,get_user,utils
 
 from contextlib import asynccontextmanager
-from dotenv import load_dotenv
+from dotenv import load_dotenv,dotenv_values
+print(f'Environmental variables:\n{json.dumps(dict(dotenv_values()),sort_keys=True, indent=4)}')
 load_dotenv()
 
 MODE = os.environ["MODE"]
@@ -22,6 +21,7 @@ ORIGINS = os.environ["ORIGINS"].split(' ')
 APPLICATION_PORT = int(os.environ["PORT"])
 
 if MODE=='prod':
+    import ngrok
     # ngrok free tier only allows one agent. So we tear down the tunnel on application termination
     @asynccontextmanager
     async def lifespan(app: fastapi.FastAPI):
@@ -199,4 +199,9 @@ async def search_users(db: database.DB, current_user: TU, query: str) -> list[mo
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="127.0.0.1", port=APPLICATION_PORT, reload=True)
+    from pathlib import Path
+
+    current_dir = Path(__file__).parent.resolve()
+    app_file = current_dir / "main.py"
+
+    os.system(f'fastapi {"run" if MODE=="prod" else "dev"} {app_file} --host {os.environ["IP"]} --port {APPLICATION_PORT}')

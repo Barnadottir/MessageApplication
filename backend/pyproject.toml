@@ -15,6 +15,7 @@ sqlmodel = "^0.0.22"
 orjson = "^3.10.11"
 ngrok = "^1.4.0"
 python-dotenv = "^1.0.1"
+uvicorn = {extras = ["standard"], version = "^0.32.0"}
 
 
 [build-system]
