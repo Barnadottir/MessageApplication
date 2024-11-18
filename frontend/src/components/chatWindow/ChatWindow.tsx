@@ -44,10 +44,10 @@ const ChatWindow = () => {
     scrollToBottom();
   }, [chatData]);
 
+  const strippedURI = __VITE_BACKEND_URI__.replace(/^https?:\/\//, '');
+  console.log('strippedURI -> ', strippedURI);
   useEffect(() => {
-    const socket = new WebSocket(
-      `wss://af2c-89-253-80-225.ngrok-free.app/ws/chat/${username}`,
-    );
+    const socket = new WebSocket(`wss://${strippedURI}/ws/chat/${username}`);
     console.log('socket -> ', socket);
 
     const playAlertSound = () => {

@@ -10,35 +10,10 @@ import logging
 from . import models, database
 from .auth.routes import router as auth_router,TU,get_user,utils
 
-from contextlib import asynccontextmanager
-from dotenv import load_dotenv,dotenv_values
-print(f'Environmental variables:\n{json.dumps(dict(dotenv_values()),sort_keys=True, indent=4)}')
-load_dotenv()
+ORIGINS = os.environ['ORIGINS'].split(' ')
+print(f'Listening to origins: {ORIGINS}')
 
-MODE = os.environ["MODE"]
-assert MODE in ['prod','dev']
-ORIGINS = os.environ["ORIGINS"].split(' ')
-APPLICATION_PORT = int(os.environ["PORT"])
-
-if MODE=='prod':
-    import ngrok
-    # ngrok free tier only allows one agent. So we tear down the tunnel on application termination
-    @asynccontextmanager
-    async def lifespan(app: fastapi.FastAPI):
-        print("Setting up Ngrok Tunnel")
-        ngrok.set_auth_token(os.environ["NGROK_AUTH_TOKEN"])
-        ngrok.forward(
-            addr=APPLICATION_PORT,
-            labels=os.environ.get("NGROK_EDGE","edge:edghts_"),
-            proto="labeled",
-        )
-        yield
-        print("Tearing Down Ngrok Tunnel")
-        ngrok.disconnect()
-else:
-    lifespan = None
-
-app = fastapi.FastAPI(lifespan=lifespan,default_response_class=ORJSONResponse)
+app = fastapi.FastAPI(default_response_class=ORJSONResponse)
 
 app.add_middleware(
     CORSMiddleware,
@@ -196,12 +171,3 @@ async def search_users(db: database.DB, current_user: TU, query: str) -> list[mo
         )
     ).all()
     return [models.UserOut(username=u.username, full_name=u.full_name) for u in search_results if u.id!=current_user.id]
-
-
-if __name__ == "__main__":
-    from pathlib import Path
-
-    current_dir = Path(__file__).parent.resolve()
-    app_file = current_dir / "main.py"
-
-    os.system(f'fastapi {"run" if MODE=="prod" else "dev"} {app_file} --host {os.environ["IP"]} --port {APPLICATION_PORT}')

@@ -23,8 +23,10 @@ const handleAxiosError = (error) => {
   return new Error(error.message || 'Unknown error');
 };
 
+console.log('API URL is:', __VITE_BACKEND_URI__);
+
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8000/',
+  baseURL: __VITE_BACKEND_URI__,
   withCredentials: true,
 });
 
