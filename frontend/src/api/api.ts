@@ -94,3 +94,10 @@ export const logout = async () => {
   const response = await axiosInstance.get('/auth/logout');
   return response;
 };
+
+export const addFriend = async (friend: string) => {
+  const response = await axiosInstance.post('/add_friend', null, {
+    params: { friend_username: friend },
+  });
+  return response.data;
+};
