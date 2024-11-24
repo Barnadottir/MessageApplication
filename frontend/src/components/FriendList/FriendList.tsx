@@ -31,30 +31,26 @@ const FriendList = () => {
     <div className={styles['friendlist--wrapper']}>
       <h2>Welcome {username}</h2>
       <Logout />
-      <div style={{ position: 'relative' }}>
-        <div className={styles['style-cards--wrapper']}>
-          <div className={styles['friendlist--container']}>
-            {friendList &&
-              friendList.map((friend) => (
-                <div
-                  key={friend.username}
-                  className={styles['friend-card']}
-                  onClick={() => setFriend(friend.username)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) =>
-                    e.key === 'Enter' && setFriend(friend.username)
-                  }
-                >
-                  <div className={styles['friend-name']}>
-                    {friend.full_name}
-                  </div>
-                  <div className={styles['friend-username']}>
-                    {friend.username}
-                  </div>
+      <div className={styles['friend-card--wrapper']}>
+        <div className={styles['friendlist--container']}>
+          {friendList &&
+            friendList.map((friend) => (
+              <div
+                key={friend.username}
+                className={styles['friend-card']}
+                onClick={() => setFriend(friend.username)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) =>
+                  e.key === 'Enter' && setFriend(friend.username)
+                }
+              >
+                <div className={styles['friend-name']}>{friend.full_name}</div>
+                <div className={styles['friend-username']}>
+                  {friend.username}
                 </div>
-              ))}
-          </div>
+              </div>
+            ))}
         </div>
       </div>
     </div>
