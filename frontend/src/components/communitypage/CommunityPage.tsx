@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import UsersSearch from '../usersSearch/UsersSearch';
 import styles from './CommunityPage.module.scss';
 import { addFriend, getFriendsList } from '../../api/api';
@@ -13,11 +13,10 @@ interface FriendListType {
 
 const CommunityPage = () => {
   const [users, setUsers] = useState<Array<string> | null>(null);
-  const { setFriend } = useContext(FriendContext);
-  const { username } = useContext(AuthContext);
   const [friendList, setFriendList] = useState<Array<FriendListType> | null>(
     null,
   );
+
   const friendsUsernames = friendList?.map((friend) => friend.username);
 
   const handleAddFriend = async (friend: string) => {
@@ -27,6 +26,15 @@ const CommunityPage = () => {
       setFriendList(response.data);
     }
   };
+
+  useEffect(() => {
+    const getFriends = async () => {
+      const response = await getFriendsList();
+      setFriendList(response.data);
+    };
+    getFriends();
+  }, []);
+
   return (
     <div className={styles['community-page--wrapper']}>
       <UsersSearch users={users} setUsers={setUsers} />
