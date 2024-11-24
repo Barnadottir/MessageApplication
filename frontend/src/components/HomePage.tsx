@@ -14,6 +14,9 @@ const HomePage = () => {
     <div className={styles['homepage--wrapper']}>
       {loggedIn ? (
         <div className={styles['main-chat--wrapper']}>
+          <h1 style={{ position: 'fixed', top: '0px', color: 'silver' }}>
+            Dear voyager, welcome to the Space chat.
+          </h1>
           <FriendProvider>
             <CommunityPage />
             <FriendList />

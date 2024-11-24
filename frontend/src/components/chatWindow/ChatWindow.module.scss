@@ -9,6 +9,7 @@
   border-radius: 0 10px 10px 0;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   min-height: 100%;
+  color: #ffffff; /* Ensure text is readable on the dark background */
 }
 
 .chatwindow--messages {
@@ -39,22 +40,22 @@
 
   &.sent {
     align-self: flex-end;
-    background-color: #dff0d8;
-    color: #333;
+    //background-color: #0074d9; /* Use the same blue for sent messages */
+    color: #ffffff;
     margin-right: 1rem;
   }
 
   &.received {
     align-self: flex-start;
-    background-color: #f5f5f5;
-    color: #333;
+    //background-color: #001f3f; /* Use the darker blue for received messages */
+    color: #ffffff;
     margin-left: 1rem;
   }
 
   .timestamp {
     align-self: flex-end;
     font-size: 0.7rem;
-    color: #888;
+    color: #cccccc;
     margin-top: 0.25rem;
   }
 }
@@ -62,7 +63,6 @@
 .chatwindow-input--wrapper {
   flex-shrink: 0;
   flex-grow: 0;
-  height: object-fit;
   padding-bottom: 1rem;
   display: flex;
   flex-direction: row;
@@ -74,16 +74,16 @@
   width: 100%;
   padding: 0.75rem;
   border-radius: 20px;
-  border: 1px solid #cce8e1;
-  background: #f0f9f8;
+  border: 1px solid #004080; /* Matching the theme */
+  background: #ffffff;
   outline: none;
-  color: #333;
+  color: #333333;
   font-size: 1rem;
   transition: border 0.3s;
   max-height: 30px;
   min-height: 30px;
 
   &:focus {
-    border-color: #a4d4ca;
+    border-color: #0074d9;
   }
 }
