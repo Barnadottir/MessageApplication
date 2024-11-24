@@ -41,7 +41,7 @@ export const signup = async (
   full_name: string,
   password: string,
 ) => {
-  const response = await axiosInstance.post('auth/signup', {
+  const response = await axiosInstance.post('/auth/signup', {
     username,
     email,
     full_name,
