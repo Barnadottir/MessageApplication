@@ -18,7 +18,8 @@ const SignupForm = () => {
   });
   const [secondPass, setSecondPass] = useState<string>('');
 
-  const handleSignup = async () => {
+  const handleSignup = async (e) => {
+    e.preventDefault();
     console.log('here');
 
     const response = await signup(
@@ -32,7 +33,7 @@ const SignupForm = () => {
   };
 
   return (
-    <form className={styles['signup-form']} onSubmit={handleSignup}>
+    <form className={styles['signup-form']} onSubmit={(e) => handleSignup(e)}>
       <label>signup form</label>
 
       <input
