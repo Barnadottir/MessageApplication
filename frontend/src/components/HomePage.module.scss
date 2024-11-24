@@ -5,18 +5,19 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url('../assets/WinterBackground.jpg');
-  background-size: contain;
+  background: url('../assets/space-background.gif');
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .main-chat--wrapper {
-  opacity: 100%;
+  opacity: 70%;
   display: flex;
   justify-content: center;
   flex-direction: row;
   align-items: center;
-  width: 75dvw;
-  height: 80dvh;
+  width: 90dvw;
+  height: 90dvh;
   overflow: hidden;
   border-radius: 2rem;
 }

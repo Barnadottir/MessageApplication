@@ -5,6 +5,7 @@ import HomePage from './components/HomePage';
 
 function App() {
   document.body.style.overflow = 'hidden';
+  document.body.style.margin = '0';
   return (
     <>
       <AuthProvider>
