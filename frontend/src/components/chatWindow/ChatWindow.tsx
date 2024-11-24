@@ -101,7 +101,7 @@ const ChatWindow = () => {
           </div>
         ))}
       </div>
-      <div className={styles['chatWindow-input--wrapper']}>
+      <div className={styles['chatwindow-input--wrapper']}>
         <input
           type="text"
           value={currentMessage}

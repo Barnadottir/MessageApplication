@@ -29,7 +29,7 @@ const FriendList = () => {
 
   return (
     <div className={styles['friendlist--wrapper']}>
-      <h2>Welcome {username}</h2>
+      <h2 style={{ color: 'white' }}>Welcome {username}</h2>
       <Logout />
       <div className={styles['friend-card--wrapper']}>
         <div className={styles['friendlist--container']}>

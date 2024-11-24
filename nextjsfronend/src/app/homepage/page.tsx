@@ -16,7 +16,9 @@ export default async function Homepage() {
 
   return (
     <div>
-      <h1>Welcome to the homepage</h1>
+      <h1 style={{ paddingTop: '0', marginBlockStart: '0' }}>
+        Welcome to the homepage
+      </h1>
       {data[0].body}
 
       <ClientComponent />
