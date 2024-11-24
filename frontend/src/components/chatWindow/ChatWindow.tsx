@@ -45,7 +45,6 @@ const ChatWindow = () => {
   }, [chatData]);
 
   const strippedURI = __VITE_BACKEND_URI__.replace(/^https?:\/\//, '');
-  console.log('strippedURI -> ', strippedURI);
   useEffect(() => {
     const socket = new WebSocket(`wss://${strippedURI}/ws/chat/${username}`);
     console.log('socket -> ', socket);

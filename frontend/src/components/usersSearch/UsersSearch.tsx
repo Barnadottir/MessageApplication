@@ -7,12 +7,12 @@ interface User {
   full_name: string;
 }
 
-interface UsersSearch {
+interface UsersSearch extends React.HTMLAttributes<HTMLDivElement> {
   users?: string[] | null;
   setUsers: (e: string[] | null) => void;
 }
 
-const UsersSearch = ({ setUsers }: UsersSearch) => {
+const UsersSearch = ({ setUsers, ...res }: UsersSearch) => {
   const [searchString, setSearchString] = useState<string>('');
   useEffect(() => {
     const fetchUsers = async () => {
@@ -21,7 +21,6 @@ const UsersSearch = ({ setUsers }: UsersSearch) => {
         return;
       }
       const response = await searchUsers(searchString);
-      console.log('response ->', response);
 
       if (response.data) {
         if (response.data.length === 0) {
@@ -34,7 +33,7 @@ const UsersSearch = ({ setUsers }: UsersSearch) => {
     fetchUsers();
   }, [searchString]);
   return (
-    <div className={styles['search-input--wrapper']}>
+    <div className={styles['search-input--wrapper']} {...res}>
       <input
         type="text"
         value={searchString}
